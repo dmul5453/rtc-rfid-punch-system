@@ -48,10 +48,25 @@ long minutesDiff(int year1, int mon1, int day1, int hour1, int min1,
 // displays given dateTime
 void displayTime(RTCDateTime t) {
   lcd.setCursor(0, 1);
+  if (t.month < 10) {
+    lcd.print("0");
+  }
   lcd.print(t.month);  lcd.print("-");
+  if (t.day < 10) {
+    lcd.print("0");
+  }
   lcd.print(t.day);    lcd.print(" ");
+  if (t.hour < 10) {
+    lcd.print("0");
+  }
   lcd.print(t.hour);   lcd.print(":");
+  if (t.minute < 10) {
+    lcd.print("0");
+  }
   lcd.print(t.minute); lcd.print(":");
+  if (t.second < 10) {
+    lcd.print("0");
+  }
   lcd.print(t.second);
   delay(3000); // how long the time stays on the screen before the monitor is cleared (3 seconds)
   lcd.clear();
@@ -102,12 +117,12 @@ struct UserID {
 // an array of registered users
 // TODO: make this dynamic at runtime?
 UserID users[6] = {
-  { "Jono ",   { 0x43, 0x81, 0xAF, 0x05 }, false },  // card
-  { "Tao Xie ", { 0x43, 0x08, 0x1E, 0x11 }, false }, // tag
-  { "Jerma ", { 0x73, 0x3F, 0x21, 0x13 }, false },  // card
-  { "Bob ", { 0x03, 0x65, 0xBD, 0x0B }, false }, // tag
-  { "Nick ", { 0x73, 0x4F, 0x3F, 0x05 }, false }, // card
-  { "Vinny ", { 0x93, 0x38, 0xD6, 0x0B }, false } // tag
+  { "Tao ",   { 0x43, 0x81, 0xAF, 0x05 }, false },  // card
+  { "Xie ", { 0x43, 0x08, 0x1E, 0x11 }, false }, // tag
+  { "Mayur ", { 0x73, 0x3F, 0x21, 0x13 }, false },  // card
+  { "Bagwe ", { 0x03, 0x65, 0xBD, 0x0B }, false }, // tag
+  { "Swayam ", { 0x73, 0x4F, 0x3F, 0x05 }, false }, // card
+  { "Pati ", { 0x93, 0x38, 0xD6, 0x0B }, false } // tag
 };
 
 void loop() {
