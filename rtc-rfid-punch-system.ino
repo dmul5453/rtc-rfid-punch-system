@@ -29,8 +29,8 @@ DS3231 clock;
 
 // converts date to julian date for use in calculations
 long convertToJD(int year, int month, int day) {
-  return day - 32075 + 1461L * (year + 4800 + (month - 14) / 12) / 4 + 367 * 
-    (month - 2 - (month - 14) / 12 * 12) / 12 - 3 * ((year + 4900 + (month - 14) / 12) / 100) / 4;
+  return day - 32075 + 1461L * (year + 4800 + (month - 14) / 12) / 4 + 367 *
+         (month - 2 - (month - 14) / 12 * 12) / 12 - 3 * ((year + 4900 + (month - 14) / 12) / 100) / 4;
 }
 
 // calculates difference in days between two dates by using their julian dates
@@ -47,19 +47,20 @@ long minutesDiff(int year1, int mon1, int day1, int hour1, int min1,
 
 // displays given dateTime
 void displayTime(RTCDateTime t) {
-  lcd.clear();
   lcd.setCursor(0, 1);
   lcd.print(t.month);  lcd.print("-");
   lcd.print(t.day);    lcd.print(" ");
   lcd.print(t.hour);   lcd.print(":");
   lcd.print(t.minute); lcd.print(":");
   lcd.print(t.second);
+  delay(3000); // how long the time stays on the screen before the monitor is cleared (3 seconds)
+  lcd.clear();
 }
 
 // displays the difference in hours between two given dateTimes
 void displayTimeWorked(RTCDateTime tIn, RTCDateTime tOut) {
-  double mins = minutesDiff(tIn.year, tIn.month, tIn.day, tIn.hour, 
-    tIn.minute, tOut.year, tOut.month, tOut.day, tOut.hour, tOut.minute);
+  double mins = minutesDiff(tIn.year, tIn.month, tIn.day, tIn.hour,
+                            tIn.minute, tOut.year, tOut.month, tOut.day, tOut.hour, tOut.minute);
   double hours = mins / 60;
 
   lcd.clear();
@@ -68,6 +69,8 @@ void displayTimeWorked(RTCDateTime tIn, RTCDateTime tOut) {
   lcd.setCursor(0, 1);
   lcd.print(hours);
   lcd.print(" hours.");
+  delay(3000);
+  lcd.clear();
 }
 
 // print the provided UID in hex to the serial port.
@@ -98,33 +101,40 @@ struct UserID {
 
 // an array of registered users
 // TODO: make this dynamic at runtime?
-UserID users[2] = {
-  { "Jono (CARD)",   { 0x43, 0x81, 0xAF, 0x05 }, false },
-  { "Tao Xie (TAG)", { 0x43, 0x08, 0x1E, 0x11 }, false }
+UserID users[6] = {
+  { "Jono ",   { 0x43, 0x81, 0xAF, 0x05 }, false },  // card
+  { "Tao Xie ", { 0x43, 0x08, 0x1E, 0x11 }, false }, // tag
+  { "Jerma ", { 0x73, 0x3F, 0x21, 0x13 }, false },  // card
+  { "Bob ", { 0x03, 0x65, 0xBD, 0x0B }, false }, // tag
+  { "Nick ", { 0x73, 0x4F, 0x3F, 0x05 }, false }, // card
+  { "Vinny ", { 0x93, 0x38, 0xD6, 0x0B }, false } // tag
 };
 
 void loop() {
   // if we have no card to scan, just return
   if (!mfrc522.PICC_IsNewCardPresent() || !mfrc522.PICC_ReadCardSerial())
     return;
-  
+
   // check to see if one of the registered users punched in
   for (auto& user : users) {
     // memcmp will return 0 if the UID matches
     if (memcmp(mfrc522.uid.uidByte, user.uid, 10) != 0)
       continue;
-    
+
     // if the user was logged in, then log them out.
     // otherwise, log them in.
     user.logged_in = !user.logged_in;
 
     if (user.logged_in) {
-      Serial.print(user.name);
-      Serial.println(" clocked in.");
+      lcd.setCursor(0, 0);
+      lcd.print(user.name);
+      lcd.print(" clock in:");
       displayTime(clock.getDateTime());
     } else {
-      Serial.print(user.name);
-      Serial.println(" clocked out.");
+      lcd.setCursor(0, 0);
+      lcd.print(user.name);
+      lcd.print(" clock out:");
+      displayTime(clock.getDateTime());
       displayTimeWorked(user.login_time, clock.getDateTime());
     }
 
@@ -140,18 +150,3 @@ void loop() {
   printUID(mfrc522.uid.uidByte);
   Serial.println();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
