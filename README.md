@@ -8,3 +8,7 @@ rtcPrototype.ino is a program used for a prototype punch system that has no RFID
 LiquidCrystal.zip is a library used for the LCD monitor
 
 CS530_LCD_Display.ino is a program used for a prototype LCD monitor
+
+rtc-system-protorype.ino is a program for a prototype of the complete system, OUTDATED
+
+rtc-rdid-punch-system.ino is the final program for the entire project
